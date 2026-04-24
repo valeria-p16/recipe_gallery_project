@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="row mx-0 py-5">
+        <div class="col-12 col-md-10 col-lg-8 mx-auto">
+            <div class="card p-5" style="max-width: 1200px;">
+                <div class="text-center mb-4">
+                    <h2>{{ recipe.title }}</h2>
+                </div>
+                
+                <div class="mb-4">
+                    <img src="{{ url_for('static', filename='images/' + recipe.image) }}"
+                         alt="Изображение рецепта"
+                         class="img-fluid"
+                         style="max-width: 100%; height: auto;">
+                </div>
+                
+                <div class="mb-4">
+                    <strong>Автор:</strong> {{ author.login }}
+                </div>
+                
+                <div class="mb-4">
+                    <h4>Ингредиенты</h4>
+                    <p>{{ recipe.ingredients }}</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h4>Процесс приготовления</h4>
+                    <p>{{ recipe.description }}</p>
+                </div>
+                
+                <div class="text-center">
+                    <a href="{{ url_for('main') }}" class="btn btn-secondary">Назад</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

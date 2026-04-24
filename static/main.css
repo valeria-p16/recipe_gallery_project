@@ -1,0 +1,165 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.header-container {
+    background: url('/static/berry.jpg') no-repeat center center;
+    background-size: cover;
+    padding: 25px 0;
+    text-align: center;
+    border: 3px solid darken(#4D5668, 20%);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.header-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 0;
+}
+
+.header-title {
+    font-size: 36px;
+    color: white;
+    font-style: italic;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.control-panel {
+    padding: 10px 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 100%;
+    margin: 0;
+}
+
+.control-panel .buttons {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 5px;
+}
+
+.control-panel .user-info {
+    text-align: right;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.recipe-section {
+    padding: 20px 0;
+}
+
+.recipe-card {
+    border-radius: 8px;
+    transition: transform 0.3s;
+    background-color: #fff;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.recipe-card .card-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.recipe-card .btn {
+    margin: 0 5px;
+}
+.user-info .btn-outline-danger {
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+.user-info .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+.search-container {
+    padding: 0 20px;
+}
+
+.input-group {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.input-group input {
+    border-radius: 4px 0 0 4px;
+}
+
+.input-group button {
+    border-radius: 0 4px 4px 0;
+}
+
+.comment {
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.comment strong {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.input-group textarea {
+    height: 150px;
+}
+
+.input-group {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.comment-input {
+    border-radius: 4px 0 0 4px;
+    padding: 10px;
+    color: black;
+}
+
+.comment-input::placeholder {
+    color: #6c757d !important;
+}
+
+.comment-input:focus {
+    color: black !important;
+}
+
+.input-group .btn-primary {
+    border-radius: 0 4px 4px 0;
+}
+
+@media (max-width: 768px) {
+    .control-panel {
+        width: 100%;
+    }
+
+    .control-panel .buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+}

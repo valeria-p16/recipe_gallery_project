@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="row mx-0 py-5">
+        <div class="col-12 col-md-10 col-lg-8 mx-auto">
+            <div class="card p-5" style="max-width: 1200px;">
+                <h2 class="text-center mb-5">Создать рецепт</h2>
+
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="form-group mb-4">
+                        {{ form.recipe_name.label(class="form-label") }}
+                        {{ form.recipe_name(class="form-control", placeholder="Введите название рецепта") }}
+                        {% for error in form.recipe_name.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group mb-4">
+                        {{ form.ingredients.label(class="form-label") }}
+                        {{ form.ingredients(class="form-control", rows=4, placeholder="Перечислите ингредиенты") }}
+                        {% for error in form.ingredients.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group mb-4">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control", rows=8, placeholder="Описание приготовления") }}
+                        {% for error in form.description.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <div class="file-upload">
+                            {{ form.recipe_image.label(class="form-label") }}
+                            {{ form.recipe_image(class="form-control-file") }}
+                            <div class="form-text text-muted">
+                                Допустимые форматы: .jpg, .jpeg, .png, .gif, .webp<br>
+                                Если файл не загрузился, значит, вы не выполнили одно из условий<br>
+                                Совет: когда будете сохранять изображение на компьютере, то прямо в названии прописывайте его формат, это может помочь
+                                <span class="text-danger">{{ form.recipe_image.errors.0 if form.recipe_image.errors }}</span>
+                            </div>
+                            <div class="form-text" id="fileInfo">Файл не выбран</div>
+                            <div class="file-preview mt-3">
+                                <img id="previewImage" src="" alt="Превью" style="display: none; max-width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-lg mt-4" type="submit">{{ form.submit.label.text }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('recipe_image').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    if (file) {
+        document.getElementById('fileInfo').innerText = file.name;
+
+        reader.onload = function(e) {
+            document.getElementById('previewImage').src = e.target.result;
+            document.getElementById('previewImage').style.display = 'block';
+        };
+
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

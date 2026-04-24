@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div class="card p-4" style="width: 400px;">
+        <h1 class="text-center mb-4">Вход</h1>
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control", style="width: 350px;", autocomplete="username") }}
+                {% for error in form.username.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control", style="width: 350px;", type="password", autocomplete="current-password") }}
+                {% for error in form.password.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <button class="btn btn-primary w-100" style="width: 350px;" type="submit">{{ form.submit.label.text }}</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
