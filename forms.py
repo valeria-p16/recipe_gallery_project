@@ -40,7 +40,5 @@ class RecipeForm(FlaskForm):
     description = TextAreaField('Процесс приготовления', validators=[
         DataRequired('Пожалуйста, опишите процесс приготовления')
     ])
-    recipe_image = FileField('Фотография рецепта', validators=[
-        DataRequired('Пожалуйста, загрузите изображение рецепта')  # Добавляем валидатор
-    ])
+    recipe_image = FileField('Фотография рецепта')
     submit = SubmitField('Опубликовать')

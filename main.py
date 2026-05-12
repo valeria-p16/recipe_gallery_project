@@ -89,53 +89,34 @@ def create_recipe():
         user_id = session.get('user_id')
         if not user_id:
             return redirect(url_for('login'))
-
         if not form.recipe_image.data:
             flash('Изображение обязательно для загрузки', 'danger')
             return render_template('create_recipe.html', form=form)
-
         try:
-            filename = form.recipe_image.data.filename.rsplit('/', 1)[-1]  # Убираем путь
-            filename = filename.encode('ascii', 'ignore').decode('ascii')
-            file_ext = os.path.splitext(filename)[1].lower()
+            file_ext = os.path.splitext(form.recipe_image.data.filename)[1].lower()
             allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-
             if not file_ext or file_ext[1:] not in allowed_extensions:
                 flash('Недопустимый формат файла', 'danger')
-                return render_template('create_recipe.html', form=form)
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            try:
-                form.recipe_image.data.seek(0)
-                with Image.open(io.BytesIO(form.recipe_image.data.read())) as img:
-                    img.verify()
-                    form.recipe_image.data.seek(0)
-                    with open(image_path, 'wb') as f:
-                        while True:
-                            chunk = form.recipe_image.data.read(1024 * 1024)  # 1 МБ
-                            if not chunk:
-                                break
-                            f.write(chunk)
-            except Exception as e:
-                flash(f'Ошибка при загрузке файла: {str(e)}', 'danger')
                 return render_template('create_recipe.html', form=form)
             new_recipe = Recipes(
                 user_id=user_id,
                 title=form.recipe_name.data,
                 ingredients=form.ingredients.data,
-                description=form.description.data,
-                image=filename
+                description=form.description.data
             )
-            try:
-                db_session.add(new_recipe)
-                db_session.commit()
-                flash('Рецепт успешно создан!', 'success')
-                return redirect(url_for('main'))
-            except Exception as e:
-                db_session.rollback()
-                os.remove(image_path)  # Удаляем файл при ошибке
-                flash('Произошла ошибка при сохранении рецепта', 'danger')
+            db_session.add(new_recipe)
+            db_session.flush()
+            filename = f"{new_recipe.id}{file_ext}"
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            form.recipe_image.data.save(image_path)
+            new_recipe.image = filename
+            db_session.commit()
+            flash('Рецепт успешно создан!', 'success')
+            return redirect(url_for('main'))
+
         except Exception as e:
-            flash(f'Критическая ошибка при загрузке: {str(e)}', 'danger')
+            db_session.rollback()
+            flash(f'Произошла ошибка: {str(e)}', 'danger')
             return render_template('create_recipe.html', form=form)
 
     return render_template('create_recipe.html', form=form)
@@ -173,20 +154,26 @@ def edit_recipe(recipe_id):
     )
     if form.validate_on_submit():
         if form.recipe_image.data:
-            if recipe.image:
-                try:
-                    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], recipe.image))
-                except:
-                    flash('Ошибка при удалении старого изображения', 'danger')
-            filename = form.recipe_image.data.filename.rsplit('/', 1)[-1]
-            filename = filename.encode('ascii', 'ignore').decode('ascii')
-            file_ext = os.path.splitext(filename)[1].lower()
-            if not file_ext or file_ext[1:] not in {'png', 'jpg', 'jpeg', 'gif', 'webp'}:
+            file_ext = os.path.splitext(form.recipe_image.data.filename)[1].lower()
+            allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+            if not file_ext or file_ext[1:] not in allowed_extensions:
                 flash('Недопустимый формат файла', 'danger')
                 return render_template('edit_recipe.html', form=form, recipe=recipe)
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            form.recipe_image.data.save(image_path)
-            recipe.image = filename
+            new_filename = f"{recipe.id}{file_ext}"
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
+            if recipe.image:
+                try:
+                    old_image_path = os.path.join(app.config['UPLOAD_FOLDER'], recipe.image)
+                    if os.path.exists(old_image_path):
+                        os.remove(old_image_path)
+                except Exception as e:
+                    flash('Ошибка при удалении старого изображения', 'danger')
+            try:
+                form.recipe_image.data.save(image_path)
+                recipe.image = new_filename
+            except Exception as e:
+                flash(f'Ошибка при загрузке изображения: {str(e)}', 'danger')
+                return render_template('edit_recipe.html', form=form, recipe=recipe)
         recipe.title = form.recipe_name.data
         recipe.ingredients = form.ingredients.data
         recipe.description = form.description.data
